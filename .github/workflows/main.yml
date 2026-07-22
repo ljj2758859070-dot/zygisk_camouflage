@@ -1,0 +1,43 @@
+name: Build Zygisk Camouflage Module
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build_task:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Install Android NDK r25c
+        run: |
+          wget -q https://dl.google.com/android/repository/android-ndk-r25c-linux.zip
+          unzip -qq android-ndk-r25c-linux.zip
+          echo "ANDROID_NDK=$PWD/android-ndk-r25c" >> $GITHUB_ENV
+
+      - name: NDK-Build compile arm64-v8a
+        run: |
+          cd jni
+          $ANDROID_NDK/ndk-build APP_ABI=arm64-v8a
+          cd ..
+
+      # ==========修复Strip路径！ndk-build输出在 jni/libs/ 下==========
+      - name: Strip arm64-v8a
+        run: |
+          $ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android-strip --strip-all jni/libs/arm64-v8a/libzygisk_hook.so
+
+      - name: Package Module Zip
+        run: |
+          mkdir -p output/zygisk
+          cp jni/libs/arm64-v8a/libzygisk_hook.so output/zygisk/arm64-v8a.so
+          cp module.prop output/
+          cd output
+          zip -r ../Camouflage_Module.zip .
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Camouflage-Module
+          path: Camouflage_Module.zip
