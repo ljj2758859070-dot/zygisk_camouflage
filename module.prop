@@ -1,0 +1,7 @@
+id=propspoof
+name=GamePropSpoof
+version=1.0
+versionCode=1
+author=Me
+description=Only spoof system prop for Delta Force
+zygisk=1
