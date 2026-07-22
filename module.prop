@@ -1,0 +1,7 @@
+id=mate80rs_dfm_camouflage
+name=Mate80RS SGT-AL00 Zygisk伪装(B方案)
+version=1.2
+versionCode=3
+author=Custom
+description=PLT Zygisk进程伪装｜配置集中管理｜仅目标包名生效｜搭配SUSFS(关闭overlay)
+zygisk=true
